@@ -55,6 +55,11 @@ func.c                          # PRK C89 stencil generated code
 *.log2
 *.log3
 
+MPI1_ummap/PIC-static/pic
+MPI1_ummap/Reduce/reduce
+MPI1_ummap/Stencil/stencil
+MPI1_ummap/Synch_p2p/p2p
+MPI1_ummap/Transpose/transpose
 MPI1/AMR/amr
 MPI1/Branch/branch
 MPI1/DGEMM/dgemm
