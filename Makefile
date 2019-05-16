@@ -52,6 +52,7 @@ help:
 	@echo "       \"make allrust\"      (re-)builds all Rust targets"
 	@echo "       \"make allopenmp\"    (re-)builds all OpenMP targets"
 	@echo "       \"make allmpi1\"      (re-)builds all conventional MPI targets"
+	@echo "       \"make allmpi1_ummap\" (re-)builds all conventional MPI targets with uMMAP-IO support"
 	@echo "       \"make allfenix\"     (re-)builds all conventional MPI targets with Fenix fault tolerance"
 	@echo "       \"make allfgmpi\"     (re-)builds all Fine-Grain MPI targets"
 	@echo "       \"make allmpiopenmp\" (re-)builds all MPI + OpenMP targets"
@@ -81,6 +82,15 @@ alldarwin: allserial allopenmp allmpi1 allfgmpi allmpiopenmp allmpirma allshmem 
 allfreaks: allcharm++ allampi allgrappa alllegion
 allshared: allserial allopenmp allfortran allcxx allc1z
 allnew: allfortran allcxx allc1z
+
+allmpi1_ummap:
+	cd MPI1_ummap/Synch_p2p;     $(MAKE) p2p       "DEFAULT_OPT_FLAGS   = $(PRK_FLAGS)"
+	cd MPI1_ummap/Transpose;     $(MAKE) transpose "DEFAULT_OPT_FLAGS   = $(PRK_FLAGS)"
+	cd MPI1_ummap/Stencil;       $(MAKE) stencil   "DEFAULT_OPT_FLAGS   = $(PRK_FLAGS)"
+	cd MPI1_ummap/Reduce;        $(MAKE) reduce    "DEFAULT_OPT_FLAGS   = $(PRK_FLAGS)"  \
+                                                       "MATRIX_RANK         = $(matrix_rank)"        \
+                                                       "NUMBER_OF_FUNCTIONS = $(number_of_functions)"
+	cd MPI1_ummap/PIC-static;    $(MAKE) pic       "DEFAULT_OPT_FLAGS   = $(PRK_FLAGS)"
 
 allmpi1:
 	cd MPI1/Synch_global;        $(MAKE) global    "DEFAULT_OPT_FLAGS   = $(PRK_FLAGS)"
@@ -246,6 +256,11 @@ allrust:
 	$(MAKE) -C RUST
 
 clean:
+	cd MPI1_ummap/Reduce;		$(MAKE) clean
+	cd MPI1_ummap/Stencil;		$(MAKE) clean
+	cd MPI1_ummap/Transpose;	$(MAKE) clean
+	cd MPI1_ummap/Synch_p2p;	$(MAKE) clean
+	cd MPI1_ummap/PIC-static;	$(MAKE) clean
 	cd MPI1/DGEMM;              $(MAKE) clean
 	cd MPI1/Nstream;            $(MAKE) clean
 	cd MPI1/Reduce;             $(MAKE) clean
