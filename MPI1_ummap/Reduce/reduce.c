@@ -114,7 +114,7 @@ int main(int argc, char ** argv)
       goto ENDOFTESTS;
     }
   
-    iterations_sync = iterations / 5;
+    iterations_sync = iterations / NUM_SYNC;
 
     vector_length = atol(*++argv);
     if (vector_length < 1) {
@@ -174,8 +174,8 @@ int main(int argc, char ** argv)
     else
       MPI_Reduce(vector, NULL, vector_length, MPI_DOUBLE, MPI_SUM, 
                  root, MPI_COMM_WORLD);
-    
-    if (i > 0 && !(i % iterations_sync))
+
+    if (iter > 0 && !(iter % iterations_sync))
     {
       prk_sync(vector, vector_length * sizeof(double));
     }

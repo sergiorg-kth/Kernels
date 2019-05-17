@@ -52,6 +52,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "util.h"
 #include <par-res-kern_general.h>
 
+#define NUM_SYNC    5
 #define ESUCCESS    0
 #define TRUE        1
 #define FALSE       0
@@ -162,12 +163,13 @@ static void prk_free_v2(void *baseptr, size_t size)
   }
   else
   {
-    int  rank               = 0;
-    char filename[PATH_MAX] = { 0 };
+    int  rank                    = 0;
+    char filename[PATH_MAX << 1] = { 0 };
     
     if (settings.type == PRK_ALLOC_MMAP)
     {
       size = (size + (settings.seg_size - 1)) & ~(settings.seg_size - 1);
+      msync(baseptr,  size, MS_SYNC);
       munmap(baseptr, size);
     }
     else
