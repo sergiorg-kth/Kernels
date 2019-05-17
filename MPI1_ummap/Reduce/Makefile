@@ -8,10 +8,11 @@ OPTFLAGS    = $(DEFAULT_OPT_FLAGS)
 USERFLAGS     = 
 #description: parameter to specify optional flags
 UMMAPIO_PATH = ../../../ummap-io/build
-EXTOBJS      = 
+UTIL_PATH    = ../../../build
+EXTOBJS      = $(UTIL_PATH)/obj/util.o
 LIBS         = -lummapio
 LIBPATHS     = -L$(UMMAPIO_PATH)/lib
-INCLUDEPATHS = -I$(UMMAPIO_PATH)/include
+INCLUDEPATHS = -I$(UMMAPIO_PATH)/include -I$(UTIL_PATH)/include
 
 ifeq (,$(findstring Cray,$(shell cc -V 2>&1)))
     LIBS     += -pthread -lrt

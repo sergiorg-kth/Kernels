@@ -64,6 +64,7 @@ HISTORY: Written by Rob Van der Wijngaart, March 2006.
   
 *******************************************************************/
 
+#include "prk_ummap.h"
 #include <par-res-kern_general.h>
 #include <par-res-kern_mpi.h>
 
@@ -73,6 +74,7 @@ int main(int argc, char ** argv)
   int my_ID;            /* Rank                                              */
   int root=0;
   int iterations;       /* number of times the reduction is carried out      */
+  int iterations_sync;  /* number of iterations between synchronizations     */
   long i, iter;         /* dummies                                           */
   long vector_length;   /* length of the vectors to be aggregated            */
   double * RESTRICT vector; /* vector to be reduced                          */
@@ -111,6 +113,8 @@ int main(int argc, char ** argv)
       error = 1;
       goto ENDOFTESTS;
     }
+  
+    iterations_sync = iterations / 5;
 
     vector_length = atol(*++argv);
     if (vector_length < 1) {
@@ -131,16 +135,18 @@ int main(int argc, char ** argv)
   }
 
   /* Broadcast benchmark data to all ranks */
-  MPI_Bcast(&iterations,    1, MPI_INT, root, MPI_COMM_WORLD);
-  MPI_Bcast(&vector_length, 1, MPI_LONG, root, MPI_COMM_WORLD);
-  vector= (double *) prk_malloc(2*vector_length*sizeof(double)); 
-  if (vector==NULL) {
+  MPI_Bcast(&iterations,      1, MPI_INT,  root, MPI_COMM_WORLD);
+  MPI_Bcast(&iterations_sync, 1, MPI_INT,  root, MPI_COMM_WORLD);
+  MPI_Bcast(&vector_length,   1, MPI_LONG, root, MPI_COMM_WORLD);
+  
+  vector = (double *) prk_malloc_v2(vector_length * sizeof(double)); 
+  ones   = (double *) prk_malloc(vector_length * sizeof(double));
+  if (vector == NULL || ones == NULL) {
     printf("ERROR: Could not allocate space %ld for vector in rank %d\n", 
            2*vector_length*sizeof(double),my_ID);
     error = 1;
   }
   bail_out(error);
-  ones = vector + vector_length;
 
   /* initialize the arrays                                                    */
   for (i=0; i<vector_length; i++) {
@@ -168,7 +174,11 @@ int main(int argc, char ** argv)
     else
       MPI_Reduce(vector, NULL, vector_length, MPI_DOUBLE, MPI_SUM, 
                  root, MPI_COMM_WORLD);
-
+    
+    if (i > 0 && !(i % iterations_sync))
+    {
+      prk_sync(vector, vector_length * sizeof(double));
+    }
   } /* end of iterations */
 
   local_reduce_time = wtime() - local_reduce_time;
@@ -177,7 +187,7 @@ int main(int argc, char ** argv)
   
 
   /* verify correctness */
-  if (my_ID == root) {
+  if (0 && my_ID == root) {
     element_value = iterations+2.0+
       (iterations*iterations+5.0*iterations+4.0)*(Num_procs-1.0)/2;
     for (i=0; i<vector_length; i++) {
@@ -205,6 +215,9 @@ int main(int argc, char ** argv)
     printf("Rate (MFlops/s): %lf  Avg time (s): %lf\n",
            1.0E-06 * (2.0*Num_procs-1.0)*vector_length/ avgtime, avgtime);
   }
+
+  prk_free_v2(vector, vector_length * sizeof(double)); 
+  prk_free(ones);
 
   MPI_Finalize();
   exit(EXIT_SUCCESS);

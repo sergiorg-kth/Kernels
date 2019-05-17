@@ -35,8 +35,12 @@ POSSIBILITY OF SUCH DAMAGE.
 
 /* All of this is to get posix_memalign defined... */
 /* #define _POSIX_C_SOURCE (200112L) */
+#ifndef _POSIX_C_SOURCE
 #define _POSIX_C_SOURCE (200809L)
+#endif
+#ifndef _XOPEN_SOURCE
 #define _XOPEN_SOURCE 600
+#endif
 
 #include <stdio.h>
 #include <stdlib.h>
