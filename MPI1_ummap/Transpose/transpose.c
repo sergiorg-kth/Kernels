@@ -281,7 +281,12 @@ int main(int argc, char ** argv)
   }
 
   for (iter = 0; iter<=iterations; iter++){
-
+    
+    if (my_ID == root)
+    {
+      printf("iter=%d\n", iter);
+    }
+    
     /* start timer after a warmup iteration                                        */
     if (iter == 1) {
       MPI_Barrier(MPI_COMM_WORLD);
