@@ -220,7 +220,7 @@ int main(int argc, char ** argv)
 
   for (iter=0; iter<=iterations; iter++) {
     
-    if (my_ID == root)
+    if (my_ID == root && !(iter % 5))
     {
       printf("iter=%d\n", iter);
     }

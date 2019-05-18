@@ -52,7 +52,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "util.h"
 #include <par-res-kern_general.h>
 
-#define NUM_SYNC    5
+#define NUM_SYNC    4
 #define ESUCCESS    0
 #define TRUE        1
 #define FALSE       0
