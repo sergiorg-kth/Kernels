@@ -158,7 +158,7 @@ int main(int argc, char ** argv)
     
     if (my_ID == root && !(iter % 5))
     {
-      printf("iter=%d\n", iter);
+      printf("iter=%ld\n", iter);
     }
     
     /* start timer after a warmup iteration */
