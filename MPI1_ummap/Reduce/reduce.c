@@ -187,24 +187,24 @@ int main(int argc, char ** argv)
   
 
   /* verify correctness */
-  if (0 && my_ID == root) {
-    element_value = iterations+2.0+
-      (iterations*iterations+5.0*iterations+4.0)*(Num_procs-1.0)/2;
-    for (i=0; i<vector_length; i++) {
-      if (ABS(vector[i] - element_value) >= epsilon) {
-        error = 1;
-#if VERBOSE
-        printf("ERROR at i=%d; value: %lf; reference value: %lf\n",
-               i, vector[i], element_value);
-#else
-        printf("First error at i=%ld; value: %lf; reference value: %lf\n",
-               i, vector[i], element_value);
-        break;
-#endif
-      }
-    }
-  }
-  bail_out(error);
+//   if (my_ID == root) {
+//     element_value = iterations+2.0+
+//       (iterations*iterations+5.0*iterations+4.0)*(Num_procs-1.0)/2;
+//     for (i=0; i<vector_length; i++) {
+//       if (ABS(vector[i] - element_value) >= epsilon) {
+//         error = 1;
+// #if VERBOSE
+//         printf("ERROR at i=%d; value: %lf; reference value: %lf\n",
+//                i, vector[i], element_value);
+// #else
+//         printf("First error at i=%ld; value: %lf; reference value: %lf\n",
+//                i, vector[i], element_value);
+//         break;
+// #endif
+//       }
+//     }
+//   }
+//   bail_out(error);
 
   if (my_ID == root) {
     printf("Solution validates\n");

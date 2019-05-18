@@ -180,7 +180,7 @@ static void prk_free_v2(void *baseptr, size_t size)
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     
     sprintf(filename, "%s/n%d/p%d", settings.path, (int)(rank/32), rank);
-    deleteDir(filename);
+    // deleteDir(filename);
   }
 }
 #endif /* PRK_UMMAP_H */
