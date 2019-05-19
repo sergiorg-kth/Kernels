@@ -99,6 +99,7 @@ int main(int argc, char ** argv)
   MPI_Init(&argc,&argv);
   MPI_Comm_rank(MPI_COMM_WORLD, &my_ID);
   MPI_Comm_size(MPI_COMM_WORLD, &Num_procs);
+  ummap_init();
 
   /* set final equal to highest rank, because it computes verification value     */
   final = Num_procs-1;
