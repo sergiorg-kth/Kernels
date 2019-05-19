@@ -225,6 +225,7 @@ int main(int argc, char ** argv)
   prk_free_v2(vector, vector_length * sizeof(double)); 
   prk_free(ones);
 
+  ummap_finalize();
   MPI_Finalize();
   exit(EXIT_SUCCESS);
 

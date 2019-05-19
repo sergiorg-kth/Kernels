@@ -399,6 +399,7 @@ int main(int argc, char ** argv)
   prk_free_v2(A_p, Colblock_size*sizeof(double)); 
   prk_free_v2(B_p, Colblock_size*sizeof(double)); 
 
+  ummap_finalize();
   MPI_Finalize();
   exit(EXIT_SUCCESS);
 

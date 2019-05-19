@@ -331,6 +331,7 @@ int main(int argc, char ** argv)
   
   prk_free_v2(vector, total_length*sizeof(double)); 
  
+  ummap_finalize();
   MPI_Finalize();
   exit(EXIT_SUCCESS);
 

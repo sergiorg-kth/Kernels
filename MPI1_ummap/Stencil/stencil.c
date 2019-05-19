@@ -491,6 +491,7 @@ int main(int argc, char ** argv) {
   prk_free_v2(in,  total_length_in);
   prk_free_v2(out, total_length_out);
   
+  ummap_finalize();
   MPI_Finalize();
   exit(EXIT_SUCCESS);
 }
