@@ -335,7 +335,7 @@ int main(int argc, char ** argv) {
 
   for (iter = 0; iter<=iterations; iter++){
     
-    if (my_ID == root && !(iter % 5))
+    if (my_ID == root) // && !(iter % 5)
     {
       avgtime = (iter) ? ((wtime() - local_stencil_time)/(double)iter) : 0.0; 
       printf("iter=%d / Avg time (s): %lf\n", iter, avgtime);
