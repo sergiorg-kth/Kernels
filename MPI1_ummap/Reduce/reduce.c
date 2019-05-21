@@ -169,18 +169,18 @@ int main(int argc, char ** argv)
       local_reduce_time = wtime();
     }
 
-    /* first do the "local" part                                                */
+    /* first do the "non-local" part                                          */
+    if (my_ID == root)
+      MPI_Reduce(MPI_IN_PLACE, ones, vector_length, MPI_DOUBLE, MPI_SUM, 
+                 root, MPI_COMM_WORLD);
+    else
+      MPI_Reduce(ones, NULL, vector_length, MPI_DOUBLE, MPI_SUM, 
+                 root, MPI_COMM_WORLD);
+
+    /* now do the "local" part                                                */
     for (i=0; i<vector_length; i++) {
       vector[i] += ones[i];
     }
-
-    /* now do the "non-local" part                                              */
-    if (my_ID == root)
-      MPI_Reduce(ones, vector, vector_length, MPI_DOUBLE, MPI_SUM, 
-                 root, MPI_COMM_WORLD); // Replaced MPI_IN_PLACE with "ones" to prevent an issue with "mmap"
-    else
-      MPI_Reduce(vector, NULL, vector_length, MPI_DOUBLE, MPI_SUM, 
-                 root, MPI_COMM_WORLD);
 
     if (iter > 0 && !(iter % iterations_sync))
     {
