@@ -176,8 +176,8 @@ int main(int argc, char ** argv)
 
     /* now do the "non-local" part                                              */
     if (my_ID == root)
-      MPI_Reduce(MPI_IN_PLACE, vector, vector_length, MPI_DOUBLE, MPI_SUM, 
-                 root, MPI_COMM_WORLD);
+      MPI_Reduce(ones, vector, vector_length, MPI_DOUBLE, MPI_SUM, 
+                 root, MPI_COMM_WORLD); // Replaced MPI_IN_PLACE with "ones" to prevent an issue with "mmap"
     else
       MPI_Reduce(vector, NULL, vector_length, MPI_DOUBLE, MPI_SUM, 
                  root, MPI_COMM_WORLD);
