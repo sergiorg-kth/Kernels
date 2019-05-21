@@ -285,7 +285,8 @@ int main(int argc, char ** argv)
     
     if (my_ID == root && !(iter % 5))
     {
-      printf("iter=%d\n", iter);
+      avgtime = (iter) ? ((wtime() - local_trans_time)/(double)iter) : 0.0; 
+      printf("iter=%ld / Avg time (s): %lf\n", iter, avgtime);
     }
     
     /* start timer after a warmup iteration                                        */
