@@ -79,6 +79,7 @@ int main(int argc, char ** argv)
   long vector_length;   /* length of the vectors to be aggregated            */
   double * RESTRICT vector; /* vector to be reduced                          */
   double * RESTRICT ones;   /* constant vector                               */
+  double * RESTRICT tmp;    /* temporary vector (for mmap)                   */
   double local_reduce_time, /* timing parameters                             */
          reduce_time,
          avgtime;
@@ -142,7 +143,11 @@ int main(int argc, char ** argv)
   
   vector = (double *) prk_malloc_v2(vector_length * sizeof(double)); 
   ones   = (double *) prk_malloc(vector_length * sizeof(double));
-  if (vector == NULL || ones == NULL) {
+  
+  if (my_ID == root)
+    tmp = (double *) prk_malloc(vector_length * sizeof(double)); 
+    
+  if (vector == NULL || ones == NULL || (my_ID == root && tmp == NULL)) {
     printf("ERROR: Could not allocate space %ld for vector in rank %d\n", 
            2*vector_length*sizeof(double),my_ID);
     error = 1;
@@ -169,18 +174,24 @@ int main(int argc, char ** argv)
       local_reduce_time = wtime();
     }
 
-    /* first do the "non-local" part                                          */
-    if (my_ID == root)
-      MPI_Reduce(MPI_IN_PLACE, ones, vector_length, MPI_DOUBLE, MPI_SUM, 
-                 root, MPI_COMM_WORLD);
-    else
-      MPI_Reduce(ones, NULL, vector_length, MPI_DOUBLE, MPI_SUM, 
-                 root, MPI_COMM_WORLD);
-
-    /* now do the "local" part                                                */
+    /* first do the "local" part                                                */
     for (i=0; i<vector_length; i++) {
       vector[i] += ones[i];
     }
+
+    /* now do the "non-local" part                                              */
+    if (my_ID == root)
+    {
+      // Important: Removed the MPI_IN_PLACE and replaced it with a temp. array
+      //            to avoid issues when using mmap.
+      memset(tmp, 0, vector_length * sizeof(double));
+      MPI_Reduce(vector, tmp, vector_length, MPI_DOUBLE, MPI_SUM, 
+                 root, MPI_COMM_WORLD);
+      memcpy(vector, tmp, vector_length * sizeof(double));
+    }
+    else
+      MPI_Reduce(vector, NULL, vector_length, MPI_DOUBLE, MPI_SUM, 
+                 root, MPI_COMM_WORLD);
 
     if (iter > 0 && !(iter % iterations_sync))
     {
@@ -225,6 +236,9 @@ int main(int argc, char ** argv)
 
   prk_free_v2(vector, vector_length * sizeof(double)); 
   prk_free(ones);
+  
+  if (my_ID == root)
+    prk_free(tmp);
 
   ummap_finalize();
   MPI_Finalize();
